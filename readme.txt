@@ -2,6 +2,8 @@
     ask for update on expenses at the end of every day, print warning if 
     expenses exceeded, otherwise, carry the rest into savings. 
 
+Usage: Find most updated program in 0GUIMAIN.py
+
 Coding to do:
 1. create GUI that allows for 2 inputs, which will be displayed:
     - Monthly income input: this will stay constant and will be displayed, 
