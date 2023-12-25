@@ -10,7 +10,7 @@ class parentclass(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.wm_title('P-Finance App')
-        self.geometry('375x667')
+        self.geometry('385x667')
         self.resizable(width=False, height=False)
         
         # the container is where we'll stack a bunch of frames
@@ -58,9 +58,8 @@ class MainPage(tk.Frame):
             text = 'Login', 
             command=lambda: self.validate_login(controller)
         )
-        login_button.pack(side='top', fill=tk.X)
+        login_button.pack(side='top', fill=tk.X, expand=False)
         
-
         
     def validate_login(self, controller):
         userid = self.username_entry.get()
@@ -78,18 +77,27 @@ class SidePage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, width=375, height=667)
         
-        label = tk.Label(self, text='Income')
+        label = tk.Label(self, text='Income', justify=tk.LEFT )
         label.grid(row=5, column=1, pady=0)
         
         self.create_widgets(controller)
         
         switch_window_button = ck.CTkButton(
             self,
-            fg_color=('Black', 'gray'),
+            fg_color=('Black', 'black'),
             text='Logout',
+            corner_radius=25,
+            width=30,
+            height=30,
             command=lambda: controller.show_frame(MainPage),
         )
-        switch_window_button.grid(row=3, column=0, columnspan=3, pady=10)
+        switch_window_button.grid(row=12, column=0, columnspan=3, pady=10)
+        
+        #self.config(background=ui.Color.MAIN)
+        #the baby blue frame in the middle
+        self.cardframe = ck.CTkFrame(self, fg_color='light blue', corner_radius=25 ,height=300, width=340)
+        self.cardframe.grid(row=10, column=0, columnspan=3, padx=4 )
+    
         
     def create_widgets(self, controller):
         
