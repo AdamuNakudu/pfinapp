@@ -91,6 +91,7 @@ class SidePage(tk.Frame):
         self.grid_columnconfigure(5, weight=1)
         self.configure(background='gray25')
         
+        self.total_expenses = 0
 
         userid = controller.userid
 
@@ -264,6 +265,7 @@ class SidePage(tk.Frame):
             text='Submit Income',
             command= lambda:[self.print_Income(controller), 
             self.print_Income_Balance(controller),
+            self.print_Expenses(controller),
             self.print_Balance(controller)]
         )
         #submit_income_button.grid(row=2, column=2, pady=5, padx=10)
@@ -285,7 +287,8 @@ class SidePage(tk.Frame):
             fg_color=('Black', 'gray'),
             text='Submit Expense',
             command=lambda:[self.print_Expenses(controller),
-            self.print_Balance(controller)],
+            self.print_Income_Balance(controller),
+            self.print_Balance(controller)]
         )
         #submit_expense_button.grid(row=3, column=2, pady=5, padx=10)
         submit_expense_button.pack(side=tk.TOP, fill=tk.X)
@@ -349,7 +352,7 @@ class SidePage(tk.Frame):
             self.Balance.config(text=new_label_text)
         else:
         # Handle the case where there is no text in the entry
-            print("Please enter a valid income.")
+            print("Please enter income.")
         
     def print_Expenses(self, controller):
         Expenses_text = self.new_expenses.get(1.0, "end-1c").strip()
@@ -365,26 +368,32 @@ class SidePage(tk.Frame):
             expenses_lines = new_label_text.split('\n')
             expenses_values = [float(expense.strip('£')) for expense in expenses_lines if '£' in expense]
             
+
             self.total_expenses = sum(expenses_values)
             #total_expenses = sum(float(expense.strip('£')) for expense in new_label_text.split('\n'))
             self.TotalExpenseNum.config(text=f' £{self.total_expenses}')
+            
+            
         else:
         # Handle the case where there is no text in the entry
-            print("Please enter a valid Expense.")
+            print("Please enter an Expense.")
             
     def print_Balance(self, controller):
-        income_text = self.text1.get(1.0, "end-1c").strip()
-        income_text = float(income_text.strip('£'))
         
+        income_text = self.text1.get(1.0, "end-1c").strip()
         #Expenses_text = self.new_expenses.get(1.0, "end-1c").strip()
         #Expenses_text = float(Expenses_text.strip('£'))
         Expenses_text= float(self.total_expenses)
         
-        if income_text and Expenses_text:
-            new_label_text = '£' + str(income_text - Expenses_text)
-            self.Balance.config(text=new_label_text)
+        if income_text:
+            income_text = self.text1.get(1.0, "end-1c").strip()
+            income_text = float(income_text.strip('£'))
+        
+            if income_text and Expenses_text:
+                new_label_text = '£' + str(income_text - Expenses_text)
+                self.Balance.config(text=new_label_text)
         else:
-            print('No income or expense entered')
+            print('Both income AND expense have to be entered to calculate balance')
             
 
         
