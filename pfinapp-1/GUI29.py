@@ -265,7 +265,6 @@ class SidePage(tk.Frame):
             text='Submit Income',
             command= lambda:[self.print_Income(controller), 
             self.print_Income_Balance(controller),
-            self.print_Expenses(controller),
             self.print_Balance(controller)]
         )
         #submit_income_button.grid(row=2, column=2, pady=5, padx=10)
@@ -389,13 +388,14 @@ class SidePage(tk.Frame):
             income_text = self.text1.get(1.0, "end-1c").strip()
             income_text = float(income_text.strip('£'))
         
-            if income_text and Expenses_text:
-                new_label_text = '£' + str(income_text - Expenses_text)
-                self.Balance.config(text=new_label_text)
+        if income_text and Expenses_text:
+            new_label_text = '£' + str(income_text - Expenses_text)
+            self.Balance.config(text=new_label_text)
         else:
             print('Both income AND expense have to be entered to calculate balance')
             
-
+    def clear_Expenses(self, controller):
+        self.NewExpensesListLabel.config(text='0')
         
 if __name__ == "__main__":
     testObj = parentclass()
