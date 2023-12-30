@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import *
 import tkinter.ttk as tkk
+from PIL import ImageTk, Image
+from tkinter import Frame
 
 ck.set_appearance_mode('dark')
 ck.set_default_color_theme('dark-blue')
@@ -34,7 +36,7 @@ class parentclass(tk.Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky='nsew')
             
-        self.show_frame(SidePage)   
+        self.show_frame(MainPage)   
         
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -44,24 +46,82 @@ class parentclass(tk.Tk):
 class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text='Main Page')
-        label.pack(padx=10, pady=10)
-        label.pack(side='top', fill='none', expand=True)
+        self.configure(background='#574237')
+        
+        LoginFrame = Canvas(self, width=385, height=400, background='#574237', highlightthickness=0)
+        LoginFrame.pack(side='top', fill='none', expand=False)
+        LoginFrame.place(anchor='center', relx=0.5, rely=0.5)
+        
+        
+        self.mainpageimg = ImageTk.PhotoImage(Image.open("cashicon.png").convert(mode='RGBA').resize((92,100)))
+        
+        
+        LoginFrame.create_image(193,100, anchor=CENTER, image=self.mainpageimg)
+        
+        #label = tk.Label(LoginFrame,image=mainpageimg, text='Main Page')
+        #label.pack(padx=10, pady=10)
+        #label.pack(side='top', fill='none', expand=True)
+        
         self.create_widgets(controller)
         
-    def create_widgets(self, controller):
-        self.username_entry = tk.Entry(self)
-        self.username_entry.pack()
         
-        self.password_entry = tk.Entry(self, show='*')
+    def create_widgets(self, controller):
+        
+        # ----- Clicking on and away from username to indicate where to type -----
+        def on_clickusername(event):
+            if self.username_entry.get() == 'Username':
+                self.username_entry.delete(0, END)
+                self.username_entry.insert(0, '')
+                self.username_entry.config(fg='white')
+        def on_clickawayusername(event):
+            if self.username_entry.get() == '':
+                self.username_entry.insert(END, 'Username')
+                self.username_entry.config(foreground='gray30')
+            
+                
+        # - -   -   -   -   -   -USERNAME ENTRY-    -   -   -   -   -       
+                
+        self.username_entry = tk.Entry(self, fg='gray30', justify='center')
+        self.username_entry.insert(END, 'Username') #default text inside input
+        self.username_entry.pack()
+        self.username_entry.place(x=0, y=40, anchor='center', relx=0.5, rely=0.5)
+        
+        self.username_entry.bind('<FocusIn>', on_clickusername)
+        self.username_entry.bind('<FocusOut>', on_clickawayusername)
+        
+        
+        #-  -   -   -   -   -   -PASSWORD ENTRY-    -   -   -   -   -   
+    
+        def on_clickpassword(event):
+            if self.password_entry.get() == 'Password':
+                self.password_entry.delete(0, END)
+                self.password_entry.insert(0, '')
+                self.password_entry.config(show='*',fg='white')
+        def on_clickawaypassword(event):
+            if self.password_entry.get() == '':
+                self.password_entry.insert(END, 'Password')
+                self.password_entry.config(show='', foreground='gray30')
+            
+            
+        self.password_entry = tk.Entry(self, fg='gray30', justify='center')
+        self.password_entry.insert(END, 'Password') #default text inside input
         self.password_entry.pack()
+        self.password_entry.place(x=0, y=70, anchor='center', relx=0.5, rely=0.5)
+        
+        self.password_entry.bind('<FocusIn>', on_clickpassword)
+        self.password_entry.bind('<FocusOut>', on_clickawaypassword)
         
         login_button = tk.Button(
             self, 
             text = 'Login', 
+            background='#574237',
+            highlightcolor='#574237',
+            highlightbackground='#574237',
             command=lambda: self.validate_login(controller)
         )
         login_button.pack(side='top', fill=tk.X, expand=False)
+        login_button.place(x=0, y=100, anchor='center', relx=0.5, rely=0.5)
+        #login_button.place(anchor='center', relx=0.5, rely=0.5)
         
 
     def validate_login(self, controller):
@@ -89,11 +149,12 @@ class SidePage(tk.Frame):
         tk.Frame.__init__(self, parent, width=375, height=667)
         self.grid_rowconfigure(10, weight=1)
         self.grid_columnconfigure(5, weight=1)
-        self.configure(background='gray25')
+        self.configure(background='#574237')
         
         self.total_expenses = 0
 
         userid = controller.userid
+        
 
         self.TitlelabelFrame = tk.Frame(self, bg='gray50', height=20, width=320)
         self.TitlelabelFrame.grid(row=0, column=0, columnspan=3, pady=0, padx= 0)
@@ -147,14 +208,15 @@ class SidePage(tk.Frame):
             self.BalanceFrame,
             text='£0.00',
             font=('Helvetica', 36, 'bold'),
-            fg='blue4',
+            fg='tomato3',
             bg='gray50',
             borderwidth=0,
             highlightthickness=0,
             state='normal',
             relief=FLAT,
+            wraplength=150
         )
-        self.Balance.pack(side=tk.TOP, anchor=NE, padx=10, pady=0)
+        self.Balance.pack(side=tk.TOP, anchor=NE, expand=False, fill=None, padx=10, pady=0)
         
         
         #-  -   -   -   -spent and income labels!!  -   -   -   -   -
