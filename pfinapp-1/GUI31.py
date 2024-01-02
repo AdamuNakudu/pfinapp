@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import *
 import tkinter.ttk as tkk
+from PIL import ImageTk, Image
+from tkinter import Frame
 
 ck.set_appearance_mode('dark')
 ck.set_default_color_theme('dark-blue')
@@ -14,7 +16,7 @@ class parentclass(tk.Tk):
         self.geometry('385x667')
         self.resizable(width=False, height=False)
         self.configure(background='white')
-        self.userid = None
+        
         
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -34,48 +36,114 @@ class parentclass(tk.Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky='nsew')
             
-        self.show_frame(SidePage)   
+        self.show_frame(SidePage) 
+          
+        
         
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+        
+        #self.userid = 'None'
+        #self.userid = tk.StringVar()
+        #self.userid.set("No")
  
 #the login page        
 class MainPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text='Main Page')
-        label.pack(padx=10, pady=10)
-        label.pack(side='top', fill='none', expand=True)
+        self.configure(background='#574237')
+        
+        LoginFrame = Canvas(self, width=385, height=400, background='#574237', highlightthickness=0)
+        LoginFrame.pack(side='top', fill='none', expand=False)
+        LoginFrame.place(anchor='center', relx=0.5, rely=0.5)
+        
+        
+        self.mainpageimg = ImageTk.PhotoImage(Image.open("cashicon.png").convert(mode='RGBA').resize((92,100)))
+        
+        self.controller = controller
+        self.userid = 'None'
+        #self.userid = tk.StringVar()
+        #self.userid.set("No")
+        
+        LoginFrame.create_image(193,100, anchor=CENTER, image=self.mainpageimg)
+        
+        #label = tk.Label(LoginFrame,image=mainpageimg, text='Main Page')
+        #label.pack(padx=10, pady=10)
+        #label.pack(side='top', fill='none', expand=True)
+        
         self.create_widgets(controller)
         
-    def create_widgets(self, controller):
-        self.username_entry = tk.Entry(self)
-        self.username_entry.pack()
         
-        self.password_entry = tk.Entry(self, show='*')
+    def create_widgets(self, controller):
+        
+        # ----- Clicking on and away from username to indicate where to type -----
+        def on_clickusername(event):
+            if self.username_entry.get() == 'Username':
+                self.username_entry.delete(0, END)
+                self.username_entry.insert(0, '')
+                self.username_entry.config(fg='white')
+        def on_clickawayusername(event):
+            if self.username_entry.get() == '':
+                self.username_entry.insert(END, 'Username')
+                self.username_entry.config(foreground='gray30')
+            
+                
+        # - -   -   -   -   -   -USERNAME ENTRY-    -   -   -   -   -       
+                
+        self.username_entry = tk.Entry(self, fg='gray30', justify='center')
+        self.username_entry.insert(END, 'Username') #default text inside input
+        self.username_entry.pack()
+        self.username_entry.place(x=0, y=40, anchor='center', relx=0.5, rely=0.5)
+        
+        self.username_entry.bind('<FocusIn>', on_clickusername)
+        self.username_entry.bind('<FocusOut>', on_clickawayusername)
+        
+        
+        #-  -   -   -   -   -   -PASSWORD ENTRY-    -   -   -   -   -   
+    
+        def on_clickpassword(event):
+            if self.password_entry.get() == 'Password':
+                self.password_entry.delete(0, END)
+                self.password_entry.insert(0, '')
+                self.password_entry.config(show='*',fg='white')
+        def on_clickawaypassword(event):
+            if self.password_entry.get() == '':
+                self.password_entry.insert(END, 'Password')
+                self.password_entry.config(show='', foreground='gray30')
+            
+            
+        self.password_entry = tk.Entry(self, fg='gray30', justify='center')
+        self.password_entry.insert(END, 'Password') #default text inside input
         self.password_entry.pack()
+        self.password_entry.place(x=0, y=70, anchor='center', relx=0.5, rely=0.5)
+        
+        self.password_entry.bind('<FocusIn>', on_clickpassword)
+        self.password_entry.bind('<FocusOut>', on_clickawaypassword)
         
         login_button = tk.Button(
             self, 
             text = 'Login', 
+            background='#574237',
+            highlightcolor='#574237',
+            highlightbackground='#574237',
             command=lambda: self.validate_login(controller)
         )
         login_button.pack(side='top', fill=tk.X, expand=False)
+        login_button.place(x=0, y=100, anchor='center', relx=0.5, rely=0.5)
+        #login_button.place(anchor='center', relx=0.5, rely=0.5)
         
 
     def validate_login(self, controller):
         userid = self.username_entry.get()
         password = self.password_entry.get()
         
-        
-        
         if userid == 'admin' and password == 'password':
-            messagebox.showinfo('Login successful', 'Login Successful')
-            controller.userid = userid
-            controller.show_frame(SidePage),
-        
+            #messagebox.showinfo('Login successful', 'Login Successful')
             
+            controller.show_frame(SidePage)
+            messagebox.showinfo('OK',f"Welcome {userid}")
+        
         else:
             messagebox.showerror("Login failed", 'Wrong Username or Password')
         
@@ -89,28 +157,28 @@ class SidePage(tk.Frame):
         tk.Frame.__init__(self, parent, width=375, height=667)
         self.grid_rowconfigure(10, weight=1)
         self.grid_columnconfigure(5, weight=1)
-        self.configure(background='gray25')
+        self.configure(background='#574237')
         
-
-        userid = controller.userid
-
-        self.TitlelabelFrame = tk.Frame(self, bg='gray50', height=20, width=320)
+        self.total_expenses = 0
+        
+        
+        self.TitlelabelFrame = tk.Frame(self, bg='#574237', height=20, width=320)
         self.TitlelabelFrame.grid(row=0, column=0, columnspan=3, pady=0, padx= 0)
         
-        self.Titlelabel = tk.Label(self.TitlelabelFrame, text=f'Hi {userid} 👋', justify=tk.CENTER, font=('Helvetica bold', 26))
-        self.Titlelabel.configure(background='gray25', borderwidth=150)
+        self.Titlelabel = tk.Label(self.TitlelabelFrame, text= f"Hi Admin 👋", justify=tk.CENTER, font=('Helvetica bold', 26))
+        self.Titlelabel.configure(background='#574237', borderwidth=150)
         self.Titlelabel.place(relx=0.6, rely=0.5, anchor=tk.CENTER)
         
         
         #self.config(background=ui.Color.MAIN)
         #-  -   -the top grey box detailing total balance of the month- -   -   
-        self.cardframe = ck.CTkFrame(self, fg_color='gray50', corner_radius=25 ,height=120, width=340)
+        self.cardframe = ck.CTkFrame(self, fg_color='gray10', corner_radius=25 ,height=120, width=340)
         self.cardframe.grid(row=1, column=0, columnspan=20, padx=4, pady=5)
         
         self.cardframe.propagate(False) #this stops any labels from fitting to the fram itself, negating it
         
         #-   -  -   -   - The middle grey box -  -   -   -   -   -
-        self.Middleframe = ck.CTkFrame(self, fg_color='gray50', corner_radius=25 ,height=440, width=340)
+        self.Middleframe = ck.CTkFrame(self, fg_color='gray10', corner_radius=25 ,height=440, width=340)
         self.Middleframe.grid(row=2, column=0, columnspan=20, padx=4, pady=5)
         
         self.Middleframe.propagate(False) #this stops any labels from fitting to the fram itself, negating it
@@ -123,7 +191,7 @@ class SidePage(tk.Frame):
             text='Balance:',
             font=('Helvetica', 16, 'bold'),
             fg='white',
-            bg='gray50',
+            bg='gray10',
             borderwidth=0,
             highlightthickness=0,
             state='normal',
@@ -146,14 +214,15 @@ class SidePage(tk.Frame):
             self.BalanceFrame,
             text='£0.00',
             font=('Helvetica', 36, 'bold'),
-            fg='blue4',
+            fg='red2',
             bg='gray50',
             borderwidth=0,
             highlightthickness=0,
             state='normal',
             relief=FLAT,
+            wraplength=150
         )
-        self.Balance.pack(side=tk.TOP, anchor=NE, padx=10, pady=0)
+        self.Balance.pack(side=tk.TOP, anchor=NE, expand=False, fill=None, padx=10, pady=0)
         
         
         #-  -   -   -   -spent and income labels!!  -   -   -   -   -
@@ -161,7 +230,7 @@ class SidePage(tk.Frame):
         self.IncomeLabel = tk.Label(
             self.cardframe,
             text='INCOME: '+ 'Null',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             highlightthickness=0,
         )
@@ -173,7 +242,7 @@ class SidePage(tk.Frame):
         self.ExpensesLabel = tk.Label(
             self.cardframe,
             text='EXPENSES: '+' +£2300',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             borderwidth=0,
             highlightthickness=0,
@@ -186,7 +255,7 @@ class SidePage(tk.Frame):
         self.ExpenseBreakdownLabel = tk.Label(
             self.Middleframe,
             text='EXPENSE BREAKDOWN',
-            bg='gray50',
+            bg='gray10',
             justify='center',
             highlightthickness=0,
             borderwidth=0,
@@ -199,7 +268,7 @@ class SidePage(tk.Frame):
         self.NewExpensesListLabel = tk.Label(
             self.Middleframe,
             text='EXPENSES',
-            bg='gray50',
+            bg='gray10',
             justify='right',
             highlightthickness=0,
         )
@@ -210,7 +279,7 @@ class SidePage(tk.Frame):
         self.TotalExpense= tk.Label(
             self.Middleframe,
             text='Total Expenses',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             highlightthickness=0,
         )
@@ -221,7 +290,7 @@ class SidePage(tk.Frame):
         self.TotalExpenseNum= tk.Label(
             self.Middleframe,
             text='£0',
-            bg='gray50',
+            bg='gray10',
             justify='right',
             highlightthickness=0,
         )
@@ -285,7 +354,8 @@ class SidePage(tk.Frame):
             fg_color=('Black', 'gray'),
             text='Submit Expense',
             command=lambda:[self.print_Expenses(controller),
-            self.print_Balance(controller)],
+            self.print_Income_Balance(controller),
+            self.print_Balance(controller)]
         )
         #submit_expense_button.grid(row=3, column=2, pady=5, padx=10)
         submit_expense_button.pack(side=tk.TOP, fill=tk.X)
@@ -349,7 +419,7 @@ class SidePage(tk.Frame):
             self.Balance.config(text=new_label_text)
         else:
         # Handle the case where there is no text in the entry
-            print("Please enter a valid income.")
+            print("Please enter income.")
         
     def print_Expenses(self, controller):
         Expenses_text = self.new_expenses.get(1.0, "end-1c").strip()
@@ -365,28 +435,36 @@ class SidePage(tk.Frame):
             expenses_lines = new_label_text.split('\n')
             expenses_values = [float(expense.strip('£')) for expense in expenses_lines if '£' in expense]
             
+
             self.total_expenses = sum(expenses_values)
             #total_expenses = sum(float(expense.strip('£')) for expense in new_label_text.split('\n'))
             self.TotalExpenseNum.config(text=f' £{self.total_expenses}')
+            self.ExpensesLabel.config(text=f'Expenses: £{self.total_expenses}')
+            
+            
         else:
         # Handle the case where there is no text in the entry
-            print("Please enter a valid Expense.")
+            print("Please enter an Expense.")
             
     def print_Balance(self, controller):
-        income_text = self.text1.get(1.0, "end-1c").strip()
-        income_text = float(income_text.strip('£'))
         
+        income_text = self.text1.get(1.0, "end-1c").strip()
         #Expenses_text = self.new_expenses.get(1.0, "end-1c").strip()
         #Expenses_text = float(Expenses_text.strip('£'))
         Expenses_text= float(self.total_expenses)
+        
+        if income_text:
+            income_text = self.text1.get(1.0, "end-1c").strip()
+            income_text = float(income_text.strip('£'))
         
         if income_text and Expenses_text:
             new_label_text = '£' + str(income_text - Expenses_text)
             self.Balance.config(text=new_label_text)
         else:
-            print('No income or expense entered')
+            print('Both income AND expense have to be entered to calculate balance')
             
-
+    def clear_Expenses(self, controller):
+        self.NewExpensesListLabel.config(text='0')
         
 if __name__ == "__main__":
     testObj = parentclass()

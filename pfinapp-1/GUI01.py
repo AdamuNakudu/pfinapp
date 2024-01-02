@@ -16,7 +16,7 @@ class parentclass(tk.Tk):
         self.geometry('385x667')
         self.resizable(width=False, height=False)
         self.configure(background='white')
-        self.userid = None
+        
         
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -36,11 +36,17 @@ class parentclass(tk.Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky='nsew')
             
-        self.show_frame(MainPage)   
+        self.show_frame(SidePage) 
+          
+        
         
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+        
+        #self.userid = 'None'
+        #self.userid = tk.StringVar()
+        #self.userid.set("No")
  
 #the login page        
 class MainPage(tk.Frame):
@@ -55,6 +61,10 @@ class MainPage(tk.Frame):
         
         self.mainpageimg = ImageTk.PhotoImage(Image.open("cashicon.png").convert(mode='RGBA').resize((92,100)))
         
+        self.controller = controller
+        self.userid = 'None'
+        #self.userid = tk.StringVar()
+        #self.userid.set("No")
         
         LoginFrame.create_image(193,100, anchor=CENTER, image=self.mainpageimg)
         
@@ -128,14 +138,12 @@ class MainPage(tk.Frame):
         userid = self.username_entry.get()
         password = self.password_entry.get()
         
-        
-        
         if userid == 'admin' and password == 'password':
-            messagebox.showinfo('Login successful', 'Login Successful')
-            controller.userid = userid
-            controller.show_frame(SidePage),
-        
+            #messagebox.showinfo('Login successful', 'Login Successful')
             
+            controller.show_frame(SidePage)
+            messagebox.showinfo('OK',f"Welcome {userid}")
+        
         else:
             messagebox.showerror("Login failed", 'Wrong Username or Password')
         
@@ -152,27 +160,25 @@ class SidePage(tk.Frame):
         self.configure(background='#574237')
         
         self.total_expenses = 0
-
-        userid = controller.userid
         
-
-        self.TitlelabelFrame = tk.Frame(self, bg='gray50', height=20, width=320)
+        
+        self.TitlelabelFrame = tk.Frame(self, bg='#574237', height=20, width=320)
         self.TitlelabelFrame.grid(row=0, column=0, columnspan=3, pady=0, padx= 0)
         
-        self.Titlelabel = tk.Label(self.TitlelabelFrame, text=f'Hi {userid} 👋', justify=tk.CENTER, font=('Helvetica bold', 26))
-        self.Titlelabel.configure(background='gray25', borderwidth=150)
+        self.Titlelabel = tk.Label(self.TitlelabelFrame, text= f"Hi Admin 👋", justify=tk.CENTER, font=('Helvetica bold', 26))
+        self.Titlelabel.configure(background='#574237', borderwidth=150)
         self.Titlelabel.place(relx=0.6, rely=0.5, anchor=tk.CENTER)
         
         
         #self.config(background=ui.Color.MAIN)
         #-  -   -the top grey box detailing total balance of the month- -   -   
-        self.cardframe = ck.CTkFrame(self, fg_color='gray50', corner_radius=25 ,height=120, width=340)
+        self.cardframe = ck.CTkFrame(self, fg_color='gray10', corner_radius=25 ,height=120, width=340)
         self.cardframe.grid(row=1, column=0, columnspan=20, padx=4, pady=5)
         
         self.cardframe.propagate(False) #this stops any labels from fitting to the fram itself, negating it
         
         #-   -  -   -   - The middle grey box -  -   -   -   -   -
-        self.Middleframe = ck.CTkFrame(self, fg_color='gray50', corner_radius=25 ,height=440, width=340)
+        self.Middleframe = ck.CTkFrame(self, fg_color='gray10', corner_radius=25 ,height=440, width=340)
         self.Middleframe.grid(row=2, column=0, columnspan=20, padx=4, pady=5)
         
         self.Middleframe.propagate(False) #this stops any labels from fitting to the fram itself, negating it
@@ -185,7 +191,7 @@ class SidePage(tk.Frame):
             text='Balance:',
             font=('Helvetica', 16, 'bold'),
             fg='white',
-            bg='gray50',
+            bg='gray10',
             borderwidth=0,
             highlightthickness=0,
             state='normal',
@@ -208,7 +214,7 @@ class SidePage(tk.Frame):
             self.BalanceFrame,
             text='£0.00',
             font=('Helvetica', 36, 'bold'),
-            fg='tomato3',
+            fg='red2',
             bg='gray50',
             borderwidth=0,
             highlightthickness=0,
@@ -224,7 +230,7 @@ class SidePage(tk.Frame):
         self.IncomeLabel = tk.Label(
             self.cardframe,
             text='INCOME: '+ 'Null',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             highlightthickness=0,
         )
@@ -236,7 +242,7 @@ class SidePage(tk.Frame):
         self.ExpensesLabel = tk.Label(
             self.cardframe,
             text='EXPENSES: '+' +£2300',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             borderwidth=0,
             highlightthickness=0,
@@ -249,7 +255,7 @@ class SidePage(tk.Frame):
         self.ExpenseBreakdownLabel = tk.Label(
             self.Middleframe,
             text='EXPENSE BREAKDOWN',
-            bg='gray50',
+            bg='gray10',
             justify='center',
             highlightthickness=0,
             borderwidth=0,
@@ -262,7 +268,7 @@ class SidePage(tk.Frame):
         self.NewExpensesListLabel = tk.Label(
             self.Middleframe,
             text='EXPENSES',
-            bg='gray50',
+            bg='gray10',
             justify='right',
             highlightthickness=0,
         )
@@ -273,7 +279,7 @@ class SidePage(tk.Frame):
         self.TotalExpense= tk.Label(
             self.Middleframe,
             text='Total Expenses',
-            bg='gray50',
+            bg='gray10',
             justify='left',
             highlightthickness=0,
         )
@@ -284,7 +290,7 @@ class SidePage(tk.Frame):
         self.TotalExpenseNum= tk.Label(
             self.Middleframe,
             text='£0',
-            bg='gray50',
+            bg='gray10',
             justify='right',
             highlightthickness=0,
         )
@@ -307,14 +313,14 @@ class SidePage(tk.Frame):
     def create_widgets(self, controller):
         
         #monthly income
-        text1 = tk.Label(self.EntryForm, text="Monthly Income")
+        text1 = tk.Label(self.EntryForm, text="Monthly Income", width=1)
         #text1.grid(row=2, column=0, pady=5)
-        text1.pack(side=tk.TOP, fill=tk.X)
+        text1.pack(side=tk.TOP, fill='none', anchor=NW)
         
-        self.text1 = Text(self.EntryForm, width=15, height=1)
+        self.text1 = Text(self.EntryForm, width=5, height=1)
         self.text1.insert(END, "" +'\n')
         #self.text1.grid(row=2, column=1, pady=5)
-        self.text1.pack(side=tk.TOP, fill=tk.X)
+        self.text1.pack(side=tk.TOP, fill='none', anchor=CENTER)
         
         #self.label1=Label(self, text="", font=('Calibri 15'))
         #self.label1.grid(row=2, column=2)
@@ -330,7 +336,7 @@ class SidePage(tk.Frame):
             self.print_Balance(controller)]
         )
         #submit_income_button.grid(row=2, column=2, pady=5, padx=10)
-        submit_income_button.pack(side=tk.TOP, fill=tk.X)
+        submit_income_button.pack(side=tk.TOP, fill='none', anchor=NE)
         
         
         #expenses
@@ -433,6 +439,7 @@ class SidePage(tk.Frame):
             self.total_expenses = sum(expenses_values)
             #total_expenses = sum(float(expense.strip('£')) for expense in new_label_text.split('\n'))
             self.TotalExpenseNum.config(text=f' £{self.total_expenses}')
+            self.ExpensesLabel.config(text=f'Expenses: £{self.total_expenses}')
             
             
         else:
