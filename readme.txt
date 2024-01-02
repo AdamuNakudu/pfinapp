@@ -1,16 +1,12 @@
-	Python personal finance executable program- input monthly income, 
-    ask for update on expenses at the end of every day, print warning if 
-    expenses exceeded, otherwise, carry the rest into savings. 
+	Python personal finance executable program- input monthly income, then inpute any and all expenses. Expenses are listed individually, and the total balance is updated with every expense input. 
 
-Usage: Find most updated program in 0GUIMAIN.py
+Usage: Find most updated program in GUI31.py
 
 Coding to do:
-1. create GUI that allows for 2 inputs, which will be displayed:
-    - Monthly income input: this will stay constant and will be displayed, 
-      [add a button to allow for changes]
-    - Expenses input: can add as many items, aggregates to show total [button to edit]
-
-2. 
-
-PSEUDOCODE:
-1. Import modules: tkinter for GUI
+1. Program should print 'Hi {userid}', automatically reading the userid
+2. create a database for username and password
+3. create button that allows users the register account, which is functional and secure
+4. Allow users to include description with expense
+5. Allow users to clear all, income and expense
+6. Allow user to save the information of their account statement that can be reoponed 	   at any time.
+7. Improve general UI. 
