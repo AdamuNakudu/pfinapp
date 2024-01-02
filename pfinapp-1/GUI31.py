@@ -36,7 +36,7 @@ class parentclass(tk.Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky='nsew')
             
-        self.show_frame(SidePage) 
+        self.show_frame(MainPage) 
           
         
         
@@ -241,7 +241,7 @@ class SidePage(tk.Frame):
         
         self.ExpensesLabel = tk.Label(
             self.cardframe,
-            text='EXPENSES: '+' +£2300',
+            text='EXPENSES: '+' +£0',
             bg='gray10',
             justify='left',
             borderwidth=0,
